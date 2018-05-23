@@ -32,6 +32,23 @@ namespace MusicStore
             services.AddDbContext<StoreContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+
+                // Lockout settings
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                options.Lockout.MaxFailedAccessAttempts = 10;
+
+                // User settings
+                options.User.RequireUniqueEmail = true;
+            });
+
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
@@ -40,8 +57,6 @@ namespace MusicStore
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddMvc();
-
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
